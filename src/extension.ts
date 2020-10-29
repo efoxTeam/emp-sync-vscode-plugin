@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import axios from "axios";
 import downloadRepo from "./utils/downloadRepo";
-import { promises } from "dns";
+import template from './config/template';
 const { exec } = require("child_process");
 
 interface URL {
@@ -73,25 +73,19 @@ const updateTimer = (): void => {
   }, 1800000);
 };
 
-const inputProjectName = async():Promise<string | undefined> =>{
-  const name = await vscode.window.showInputBox({placeHolder:'请输入新建项目名'});
+const inputProjectName = async (): Promise<string | undefined> => {
+  const name = await vscode.window.showInputBox({
+    placeHolder: "请输入新建项目名",
+  });
   return name;
 };
 
-const getTemplate = (localPath: string, projectName: string) => {
-  // Efox/cli 脚手架模板库地址
-  const httpPath = `https://git.yy.com/webs/efox/efox-cli-config.git`;
-  return downloadRepo(httpPath, localPath, projectName, "");
-};
-
-const selectTemplate = async (path: string): Promise<QuickPickItem> => {
+const selectTemplate = async (): Promise<QuickPickItem> => {
   const pickList: Array<any> = [];
-  const config = await import(path);
-  config.template.map((item: { name: any; description: any; git: any; }) => {
+  template.map(item =>{
     pickList.push({
       label: item.name,
-      description: item.description,
-      detail: item.git,
+      description: item.git,
     });
   });
   const item: QuickPickItem = await vscode.window.showQuickPick(pickList);
@@ -101,42 +95,35 @@ const selectTemplate = async (path: string): Promise<QuickPickItem> => {
 const initProject = async () => {
   const inputName = await inputProjectName();
   const path = projectDir();
-  const configPath = `${path}/templateConfig${new Date().getTime()}`;
-  getTemplate(configPath, "templateConfig")
-    .then(async (res) => {
-      // 选择模板项目
-      const template = await selectTemplate(`${configPath}/config.json`);
-      // 删除配置文件
-      exec(`rm -rf ${configPath}`);
-      const projectName = inputName || template.label;
-      if (template.detail && template.label) {
-        await downloadRepo(
-          template.detail,
-          `${path}/${projectName}`,
-          projectName || template.label,
-          ""
-        );
-        // VSCode 打开 新项目 
-        exec(`code ${path}/${projectName}`);
-        vscode.window.showInformationMessage(`${projectName} Init Finish!`);
-      } else {
-        vscode.window.showInformationMessage(`${projectName} Init Error!`);
-      }
-    })
-    .catch((e) => {
-      console.error(e);
-      vscode.window.showInformationMessage(e);
-    });
+  // 选择模板项目
+  const template = await selectTemplate();
+  const projectName = inputName || template.label;
+  if (template.description && template.label) {
+    await downloadRepo(
+      template.description,
+      `${path}/${projectName}`,
+      projectName || template.label,
+      ""
+    );
+    // VSCode 打开 新项目
+    exec(`code ${path}/${projectName}`);
+    vscode.window.showInformationMessage(`${projectName} Init Finish!`);
+  } else {
+    vscode.window.showInformationMessage(`${projectName} Init Error!`);
+  }
 };
 
-const initBarButton = () =>{
-    // 状态栏按钮
-    let syncStatusBarItem: vscode.StatusBarItem;
-    syncStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    syncStatusBarItem.command = 'emp-sync-base.syncCommand';
-    syncStatusBarItem.text = '同步emp基站';
-    syncStatusBarItem.show();
-    return syncStatusBarItem;
+const initBarButton = () => {
+  // 状态栏按钮
+  let syncStatusBarItem: vscode.StatusBarItem;
+  syncStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    100
+  );
+  syncStatusBarItem.command = "emp-sync-base.syncCommand";
+  syncStatusBarItem.text = "同步emp基站";
+  syncStatusBarItem.show();
+  return syncStatusBarItem;
 };
 
 // this method is called when your extension is activated
