@@ -18,17 +18,6 @@ const axios_1 = require("axios");
 const downloadRepo_1 = require("./utils/downloadRepo");
 const template_1 = require("./config/template");
 const { exec } = require("child_process");
-const projectDir = () => {
-    var _a;
-    //获取项目根目录
-    let projectPath = "";
-    let document = (_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document;
-    if (vscode.workspace.workspaceFolders && document) {
-        let workspaceFold = vscode.workspace.workspaceFolders.find((x) => document === null || document === void 0 ? void 0 : document.uri.path.startsWith(x.uri.path));
-        projectPath = (workspaceFold === null || workspaceFold === void 0 ? void 0 : workspaceFold.uri.path) || "";
-    }
-    return projectPath;
-};
 const getConfig = () => {
     const configData = vscode.workspace.getConfiguration().get("empSyncBase.fileURL") || [];
     return configData;
@@ -47,7 +36,7 @@ const downloadFile = (path, urlList) => __awaiter(void 0, void 0, void 0, functi
     }));
 });
 const get = () => {
-    const path = projectDir();
+    const path = vscode.workspace.rootPath || '';
     const config = getConfig();
     downloadFile(path, config);
 };
@@ -76,7 +65,7 @@ const selectTemplate = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const initProject = () => __awaiter(void 0, void 0, void 0, function* () {
     const inputName = yield inputProjectName();
-    const path = projectDir();
+    const path = vscode.workspace.rootPath || '';
     // 选择模板项目
     const template = yield selectTemplate();
     const projectName = inputName || template.label;

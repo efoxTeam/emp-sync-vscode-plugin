@@ -23,20 +23,6 @@ export interface QuickPickItem {
   alwaysShow?: boolean;
 }
 
-const projectDir = (): string => {
-  //获取项目根目录
-  let projectPath = "";
-  let document = vscode.window.activeTextEditor?.document;
-
-  if (vscode.workspace.workspaceFolders && document) {
-    let workspaceFold = vscode.workspace.workspaceFolders.find((x) =>
-      document?.uri.path.startsWith(x.uri.path)
-    );
-    projectPath = workspaceFold?.uri.path || "";
-  }
-  return projectPath;
-};
-
 const getConfig = (): Array<URL> => {
   const configData: Array<URL> =
     vscode.workspace.getConfiguration().get("empSyncBase.fileURL") || [];
@@ -61,7 +47,7 @@ const downloadFile = async (
 };
 
 const get = () => {
-  const path = projectDir();
+  const path = vscode.workspace.rootPath || '';
   const config = getConfig();
   downloadFile(path, config);
 };
@@ -82,7 +68,7 @@ const inputProjectName = async (): Promise<string | undefined> => {
 
 const selectTemplate = async (): Promise<QuickPickItem> => {
   const pickList: Array<any> = [];
-  template.map(item =>{
+  template.map(item => {
     pickList.push({
       label: item.name,
       description: item.git,
@@ -94,7 +80,7 @@ const selectTemplate = async (): Promise<QuickPickItem> => {
 
 const initProject = async () => {
   const inputName = await inputProjectName();
-  const path = projectDir();
+  const path = vscode.workspace.rootPath || '';
   // 选择模板项目
   const template = await selectTemplate();
   const projectName = inputName || template.label;
@@ -157,4 +143,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

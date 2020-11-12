@@ -2,7 +2,7 @@
 	"name": "emp-sync-base",
 	"displayName": "emp-sync-base",
 	"description": "It can sync something for emp",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"publisher": "Benny",
 	"repository":"https://github.com/flyyuan/emp-sync-base",
 	"engines": {
@@ -12,13 +12,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"workspaceContains:**/emp*",
+		"workspaceContains:**",
 		"onCommand:emp-sync-base.helloWorld"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
+
 				"command": "emp-sync-base.syncCommand",
 				"title": "EMP Remote Sync"
 			},
