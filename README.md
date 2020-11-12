@@ -28,7 +28,8 @@
 + 打开 VSCode 设置
 + 找到 扩展
 + 在扩展中找到 Emp-sync-base
-+ 点击 在 settings.json 中编辑
++ 当前项目新建 .vscode 目录
++ 在 .vscode 目录下新建 settings.json 且编辑
 + 编辑 empSyncBase.fileURL 对象数组， url 为文件地址， name 为同步之后到本地的文件名，例如：
 
 ```json
