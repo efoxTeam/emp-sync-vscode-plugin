@@ -25,7 +25,7 @@ const getConfig = () => {
 // 下载远程文件,拉取配置项的URL
 const downloadFile = (path, urlList) => __awaiter(void 0, void 0, void 0, function* () {
     urlList.map((item) => __awaiter(void 0, void 0, void 0, function* () {
-        const file = fs.createWriteStream(`${path}/src/${item.name}`);
+        const file = fs.createWriteStream(`${path}/${item.name}`);
         const response = yield axios_1.default({
             url: item.url,
             method: "GET",
@@ -91,8 +91,9 @@ const initBarButton = () => {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
-    get();
-    updateTimer();
+    const autoUpdate = !!(vscode.workspace.getConfiguration().get("empSyncBase.autoUpdate"));
+    autoUpdate && get();
+    autoUpdate && updateTimer();
     // 命令
     // 同步
     const sync = vscode.commands.registerCommand("emp-sync-base.syncCommand", () => {

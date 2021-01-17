@@ -35,7 +35,7 @@ const downloadFile = async (
   urlList: Array<URL>
 ): Promise<void> => {
   urlList.map(async (item) => {
-    const file = fs.createWriteStream(`${path}/src/${item.name}`);
+    const file = fs.createWriteStream(`${path}/${item.name}`);
     const response = await axios({
       url: item.url,
       method: "GET",
@@ -115,8 +115,9 @@ const initBarButton = () => {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  get();
-  updateTimer();
+  const autoUpdate = !!(vscode.workspace.getConfiguration().get("empSyncBase.autoUpdate"));
+  autoUpdate && get();
+  autoUpdate && updateTimer();
   // 命令
   // 同步
   const sync = vscode.commands.registerCommand(

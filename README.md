@@ -30,13 +30,15 @@
 + 在扩展中找到 Emp-sync-base
 + 当前项目新建 .vscode 目录
 + 在 .vscode 目录下新建 settings.json 且编辑
-+ 编辑 empSyncBase.fileURL 对象数组， url 为文件地址， name 为同步之后到本地的文件名，例如：
++ "empSyncBase.autoUpdate": true, 半小时更新类型文件一次和每次启动自动更新，默认不开启
++ 编辑 empSyncBase.fileURL 对象数组， url 为文件地址， name 为同步之后到本地的文件名和相对目录，例如：
 
 ```json
+  "empSyncBase.autoUpdate": true,
     "empSyncBase.fileURL": [
       {
         "url": "https://raw.githubusercontent.com/apiel/adka/master/deno.d.ts",
-        "name": "@deno8.d.ts"
+        "name": "src/@deno8.d.ts"
       },
       {
         "url": "https://raw.githubusercontent.com/apiel/adka/master/deno.d.ts",
